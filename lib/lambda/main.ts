@@ -1,12 +1,11 @@
 const { Client } = require("@notionhq/client")
 import * as line from "@line/bot-sdk"
 import { OpenAI } from "openai"
-import * as dotenv from "dotenv"
+import { envorinment } from "./environment"
 
 export const main = async () => {
-  dotenv.config()
-  const notionToken = process.env.NOTION_SECRET ?? ""
-  const databaseId = process.env.NOTION_DIARY_DATABASE_ID ?? ""
+  const notionToken = envorinment.notionSecret
+  const databaseId = envorinment.notionDiaryDabaseId
 
   // Initializing a client
   const notion = new Client({
@@ -48,9 +47,9 @@ export const main = async () => {
 
     // 指定のuser_idにプッシュ通知を行う
     const client = new line.messagingApi.MessagingApiClient({
-      channelAccessToken: process.env.LINE_CHANNEL_ACCESS_TOKEN ?? "",
+      channelAccessToken: envorinment.lineChannelAccessToken,
     })
-    const userId = process.env.LINE_PUSH_USER_ID ?? ""
+    const userId = envorinment.linePushUserId
     const message = {
       type: "text",
       text: "Hello, world",
@@ -59,7 +58,7 @@ export const main = async () => {
     console.log(res)
 
     const openai = new OpenAI({
-      apiKey: process.env.OPENAI_API_KEY ?? "",
+      apiKey: envorinment.openaiApiKey,
     })
 
     // チャットする
