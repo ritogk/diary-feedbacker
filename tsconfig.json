@@ -19,7 +19,7 @@
     "strictPropertyInitialization": false,
     "esModuleInterop": true,
     "baseUrl": "./",
-    "paths": { "@/*": ["src/*"] },
+    "paths": { "@/*": ["lib/lambda/*"] },
     "typeRoots": ["./node_modules/@types"]
   },
   "exclude": ["node_modules", "cdk.out"]

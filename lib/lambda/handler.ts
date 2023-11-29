@@ -1,7 +1,8 @@
 import { EnvManger } from "./core/env/env-manger"
 import { DiaryManager } from "./core/diary-manager"
 import { DiaryFeedbacker } from "./core/diary-feedbacker"
-import { Notification } from "./core/notification"
+import { Notification } from "./core/notification/notification"
+import * as MessageGenerater from "./core/notification/message-generater"
 
 export const handler = async () => {
   const envManager = new EnvManger()
@@ -41,23 +42,6 @@ export const handler = async () => {
   // 通知する
   console.log("[st] notice")
   const notification = new Notification(env.lineChannelAccessToken)
-  const text = `■タイトル
-${feedback.title}
-
-■フィードバック
-${feedback.feedback}
-
-■メンタル
-${feedback.mental}
-
-■改善提案
-${feedback.suggestion}
-
-■良い所
-${feedback.positivity.join("\n")}
-
-■悪い所
-${feedback.negativity}`
-  notification.notice(env.linePushUserId, text)
+  notification.notice(env.linePushUserId, MessageGenerater.generate(feedback))
   console.log("[ed] notice")
 }
