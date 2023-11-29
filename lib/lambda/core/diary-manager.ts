@@ -1,11 +1,18 @@
-import { DiaryManagerType } from "./diary-manager-type"
 import { Client } from "@notionhq/client"
+
+export type DiaryManagerType = {
+  read(date: Date): Promise<{ id: string; text: string }>
+  write(
+    id: string,
+    title: string,
+    feedback: string,
+    mental: number
+  ): Promise<boolean>
+}
+
 export class DiaryManager implements DiaryManagerType {
   private readonly client: Client
-  constructor(
-    private readonly secret: string,
-    private readonly diaryDatabaseId: string
-  ) {
+  constructor(secret: string, private readonly diaryDatabaseId: string) {
     this.client = new Client({
       auth: secret,
     })

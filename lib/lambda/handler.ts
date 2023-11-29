@@ -1,7 +1,7 @@
-import { EnvManger } from "./env/env-manger"
-import { DiaryManager } from "./diary-manager"
-import { DiaryFeedbacker } from "./diary-feedbacker"
-import { Notification } from "./notification"
+import { EnvManger } from "./core/env/env-manger"
+import { DiaryManager } from "./core/diary-manager"
+import { DiaryFeedbacker } from "./core/diary-feedbacker"
+import { Notification } from "./core/notification"
 
 export const handler = async () => {
   const envManager = new EnvManger()
@@ -16,6 +16,10 @@ export const handler = async () => {
   console.log("[st] get today diary")
   const today = new Date()
   const diary = await diaryManager.read(today)
+  if (diary.text === "") {
+    console.log("no diary")
+    return
+  }
   console.log("[ed] get today diary")
 
   // フィードバックを受け取る

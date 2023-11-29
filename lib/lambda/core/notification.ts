@@ -1,5 +1,8 @@
-import { NotificationType } from "./notification-type"
 import * as line from "@line/bot-sdk"
+
+export type NotificationType = {
+  notice(id: string, text: string): Promise<boolean>
+}
 
 export class Notification implements NotificationType {
   private readonly client: line.messagingApi.MessagingApiClient

@@ -1,4 +1,4 @@
-import { handler } from "./lambda/main"
+import { handler } from "./handler"
 
 // ts-nodeから実行するためのファイル
 const run = async () => {

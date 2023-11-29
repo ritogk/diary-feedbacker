@@ -1,5 +1,17 @@
-import { DiaryFeedbackerType, FeedbackType } from "./diary-feedbacker-type"
 import { OpenAI } from "openai"
+
+export type DiaryFeedbackerType = {
+  generate(diary: string): Promise<FeedbackType>
+}
+
+export type FeedbackType = {
+  title: string
+  feedback: string
+  mental: number
+  suggestion: string
+  positivity: string[]
+  negativity: string
+}
 
 export class DiaryFeedbacker implements DiaryFeedbackerType {
   private readonly openai: OpenAI
@@ -10,7 +22,8 @@ export class DiaryFeedbacker implements DiaryFeedbackerType {
   }
   generate = async (diary: string): Promise<FeedbackType> => {
     const completion = await this.openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
+      // model: "gpt-3.5-turbo",
+      model: "gpt-4",
       max_tokens: 800,
       messages: [
         {
