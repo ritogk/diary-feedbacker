@@ -11,13 +11,20 @@ export const handler = async () => {
   const notion = new Client({
     auth: env.notionSecret,
   })
-  // データベースの日付が2023-11/14のものを取得する
+
+  // 今日日付をyyyy-mm-dd形式で取得する
+  const today = new Date()
+  const year = today.getFullYear()
+  const month = ("0" + (today.getMonth() + 1)).slice(-2)
+  const date = ("0" + today.getDate()).slice(-2)
+  const todayString = `${year}-${month}-${date}`
+
   const response = await notion.databases.query({
     database_id: env.notionDiaryDatabaseId,
     filter: {
       property: "Date",
       date: {
-        equals: "2023-11-15",
+        equals: todayString,
       },
     },
   })
@@ -29,39 +36,18 @@ export const handler = async () => {
       block_id: page.id,
     })
     // テキストのみ出力する
+    const diaryBlocks: string[] = []
     response.results.forEach((block: any) => {
       if (block.type === "paragraph" && block.paragraph.rich_text.length > 0) {
-        console.log(block.paragraph.rich_text[0].plain_text)
+        diaryBlocks.push(block.paragraph.rich_text[0].plain_text)
       }
     })
+    const diary = diaryBlocks.join("\n")
 
-    // pageのmentalプロパティに値を書き込む
-    const response2 = await notion.pages.update({
-      page_id: page.id,
-      properties: {
-        mental: {
-          number: 5,
-        },
-      },
-    })
-
-    // 指定のuser_idにプッシュ通知を行う
-    const client = new line.messagingApi.MessagingApiClient({
-      channelAccessToken: env.lineChannelAccessToken,
-    })
-    const userId = env.linePushUserId
-    const message = {
-      type: "text",
-      text: "Hello, world",
-    }
-    const res = await client.pushMessage({ to: userId, messages: [message] })
-    console.log(res)
-
+    // チャットする
     const openai = new OpenAI({
       apiKey: env.openaiApiKey,
     })
-
-    // チャットする
     const completion = await openai.chat.completions.create({
       model: "gpt-3.5-turbo",
       max_tokens: 800,
@@ -91,14 +77,34 @@ export const handler = async () => {
         },
         {
           role: "user",
-          content: `
-          今日はやつと散歩しにいったが、理解できない事を永遠と聞かされると人間って疲れるんだなあと感じた。
-            `,
+          content: diary,
         },
       ],
     })
     console.log(completion.choices[0]?.message.content)
     // トークン消費量を確認する
     console.log(completion.usage?.total_tokens)
+
+    // pageのmentalプロパティに値を書き込む
+    const response2 = await notion.pages.update({
+      page_id: page.id,
+      properties: {
+        mental: {
+          number: 5,
+        },
+      },
+    })
+
+    // 指定のuser_idにプッシュ通知を行う
+    const client = new line.messagingApi.MessagingApiClient({
+      channelAccessToken: env.lineChannelAccessToken,
+    })
+    const userId = env.linePushUserId
+    const message = {
+      type: "text",
+      text: completion.choices[0]?.message.content,
+    }
+    const res = await client.pushMessage({ to: userId, messages: [message] })
+    console.log(res)
   }
 }
