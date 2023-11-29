@@ -25,6 +25,7 @@
     "@notionhq/client": "^2.2.13",
     "aws-cdk-lib": "2.103.1",
     "constructs": "^10.0.0",
+    "dayjs": "^1.11.10",
     "dotenv": "^16.3.1",
     "openai": "^4.20.0",
     "source-map-support": "^0.5.21"

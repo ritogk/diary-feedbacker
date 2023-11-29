@@ -1,4 +1,7 @@
 import { Client } from "@notionhq/client"
+import dayjs from "dayjs"
+import utc from "dayjs/plugin/utc"
+import timezone from "dayjs/plugin/timezone"
 
 export type DiaryManagerType = {
   read(date: Date): Promise<{ id: string; text: string }>
@@ -12,24 +15,25 @@ export type DiaryManagerType = {
 
 export class DiaryManager implements DiaryManagerType {
   private readonly client: Client
+  private readonly dayjs = dayjs
   constructor(secret: string, private readonly diaryDatabaseId: string) {
     this.client = new Client({
       auth: secret,
     })
+    this.dayjs.extend(utc)
+    this.dayjs.extend(timezone)
   }
 
   read = async (today: Date): Promise<{ id: string; text: string }> => {
-    const year = today.getFullYear()
-    const month = ("0" + (today.getMonth() + 1)).slice(-2)
-    const date = ("0" + today.getDate()).slice(-2)
-    const todayString = `${year}-${month}-${date}`
-
+    const todayFormatted = this.dayjs(today)
+      .tz("Asia/Tokyo")
+      .format("YYYY-MM-DD")
     const response = await this.client.databases.query({
       database_id: this.diaryDatabaseId,
       filter: {
         property: "Date",
         date: {
-          equals: todayString,
+          equals: todayFormatted,
         },
       },
     })
