@@ -1,21 +1,19 @@
 const { Client } = require("@notionhq/client")
 import * as line from "@line/bot-sdk"
 import { OpenAI } from "openai"
-import { getEnvironment } from "./environment"
+import { EnvManger } from "./env/env-manger"
 
 export const handler = async () => {
-  const env = await getEnvironment()
-
-  const notionToken = env.notionSecret
-  const databaseId = env.notionDiaryDabaseId
+  const envManager = new EnvManger()
+  const env = await envManager.getEnv()
 
   // Initializing a client
   const notion = new Client({
-    auth: notionToken,
+    auth: env.notionSecret,
   })
   // データベースの日付が2023-11/14のものを取得する
   const response = await notion.databases.query({
-    database_id: databaseId,
+    database_id: env.notionDiaryDabaseId,
     filter: {
       property: "Date",
       date: {
@@ -104,3 +102,4 @@ export const handler = async () => {
     console.log(completion.usage?.total_tokens)
   }
 }
+handler()

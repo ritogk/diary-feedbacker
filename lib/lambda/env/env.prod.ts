@@ -1,4 +1,4 @@
-import { EnvironmentType } from "./environmentType"
+import { EnvType } from "./env-manger"
 import { GetParameterCommand, SSMClient } from "@aws-sdk/client-ssm"
 
 const getSsmParameter = async (parameterName: string): Promise<string> => {
@@ -16,7 +16,7 @@ const getSsmParameter = async (parameterName: string): Promise<string> => {
   }
 }
 
-export const getEnvironment = async (): Promise<EnvironmentType> => {
+export const getEnv = async (): Promise<EnvType> => {
   return {
     notionSecret: process.env.NOTION_SECRET ?? "",
     notionDiaryDabaseId: process.env.NOTION_DIARY_DATABASE_ID ?? "",

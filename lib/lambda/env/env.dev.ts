@@ -1,7 +1,7 @@
-import { EnvironmentType } from "./environmentType"
+import { EnvType } from "./env-manger"
 import * as dotenv from "dotenv"
 
-export const getEnvironment = async (): Promise<EnvironmentType> => {
+export const getEnv = async (): Promise<EnvType> => {
   dotenv.config()
   return {
     notionSecret: process.env.NOTION_SECRET ?? "",
