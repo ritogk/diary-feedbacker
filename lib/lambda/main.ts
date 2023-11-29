@@ -1,8 +1,7 @@
-import * as line from "@line/bot-sdk"
-import { OpenAI } from "openai"
 import { EnvManger } from "./env/env-manger"
 import { DiaryManager } from "./diary-manager"
 import { DiaryFeedbacker } from "./diary-feedbacker"
+import { Notification } from "./notification"
 
 export const handler = async () => {
   const envManager = new EnvManger()
@@ -29,15 +28,7 @@ export const handler = async () => {
     feedback.mental
   )
 
-  // 指定のuser_idにプッシュ通知を行う
-  const client = new line.messagingApi.MessagingApiClient({
-    channelAccessToken: env.lineChannelAccessToken,
-  })
-  const userId = env.linePushUserId
-  const message = {
-    type: "text",
-    text: JSON.stringify(feedback),
-  }
-  const res = await client.pushMessage({ to: userId, messages: [message] })
-  console.log(res)
+  // 通知する
+  const notification = new Notification(env.lineChannelAccessToken)
+  notification.notice(env.linePushUserId, JSON.stringify(feedback))
 }
