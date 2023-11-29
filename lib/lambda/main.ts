@@ -30,5 +30,22 @@ export const handler = async () => {
 
   // 通知する
   const notification = new Notification(env.lineChannelAccessToken)
-  notification.notice(env.linePushUserId, JSON.stringify(feedback))
+  const text = `■タイトル
+${feedback.title}
+
+■フィードバック
+${feedback.feedback}
+
+■メンタル
+${feedback.mental}
+
+■改善提案
+${feedback.suggestion}
+
+■良い所
+${feedback.positivity.join("\n")}
+
+■悪い所
+${feedback.negativity}`
+  notification.notice(env.linePushUserId, text)
 }
