@@ -1,60 +1,33 @@
-const { Client } = require("@notionhq/client")
 import * as line from "@line/bot-sdk"
 import { OpenAI } from "openai"
 import { EnvManger } from "./env/env-manger"
+import { DiaryManager } from "./diary-manager"
 
 export const handler = async () => {
   const envManager = new EnvManger()
   const env = await envManager.getEnv()
 
-  // Initializing a client
-  const notion = new Client({
-    auth: env.notionSecret,
-  })
+  const diaryManager = new DiaryManager(
+    env.notionSecret,
+    env.notionDiaryDatabaseId
+  )
 
   // 今日日付をyyyy-mm-dd形式で取得する
   const today = new Date()
-  const year = today.getFullYear()
-  const month = ("0" + (today.getMonth() + 1)).slice(-2)
-  const date = ("0" + today.getDate()).slice(-2)
-  const todayString = `${year}-${month}-${date}`
+  const diary = await diaryManager.read(today)
 
-  const response = await notion.databases.query({
-    database_id: env.notionDiaryDatabaseId,
-    filter: {
-      property: "Date",
-      date: {
-        equals: todayString,
-      },
-    },
+  // チャットする
+  const openai = new OpenAI({
+    apiKey: env.openaiApiKey,
   })
-  const pages = response.results
-  if (pages.length > 0) {
-    const page = pages[0]
-    // ページ内に含まれるブロックの内容を出力する
-    const response = await notion.blocks.children.list({
-      block_id: page.id,
-    })
-    // テキストのみ出力する
-    const diaryBlocks: string[] = []
-    response.results.forEach((block: any) => {
-      if (block.type === "paragraph" && block.paragraph.rich_text.length > 0) {
-        diaryBlocks.push(block.paragraph.rich_text[0].plain_text)
-      }
-    })
-    const diary = diaryBlocks.join("\n")
 
-    // チャットする
-    const openai = new OpenAI({
-      apiKey: env.openaiApiKey,
-    })
-    const completion = await openai.chat.completions.create({
-      model: "gpt-3.5-turbo",
-      max_tokens: 800,
-      messages: [
-        {
-          role: "system",
-          content: `
+  const completion = await openai.chat.completions.create({
+    model: "gpt-3.5-turbo",
+    max_tokens: 800,
+    messages: [
+      {
+        role: "system",
+        content: `
   あなたはプロの臨床心理士です。
   以下の制約条件と入力された日記をもとに出力してください。
   
@@ -74,37 +47,36 @@ export const handler = async () => {
   # テンプレート
   {"title":@title, "feedback":@feedback, "mental":@mental, "suggestion":@suggestion, "positivity":@positivity, "negativity":@negativity}
       `,
-        },
-        {
-          role: "user",
-          content: diary,
-        },
-      ],
-    })
-    console.log(completion.choices[0]?.message.content)
-    // トークン消費量を確認する
-    console.log(completion.usage?.total_tokens)
-
-    // pageのmentalプロパティに値を書き込む
-    const response2 = await notion.pages.update({
-      page_id: page.id,
-      properties: {
-        mental: {
-          number: 5,
-        },
       },
-    })
+      {
+        role: "user",
+        content: diary.text,
+      },
+    ],
+  })
+  console.log(completion.choices[0]?.message.content)
+  // トークン消費量を確認する
+  console.log(completion.usage?.total_tokens)
 
-    // 指定のuser_idにプッシュ通知を行う
-    const client = new line.messagingApi.MessagingApiClient({
-      channelAccessToken: env.lineChannelAccessToken,
-    })
-    const userId = env.linePushUserId
-    const message = {
-      type: "text",
-      text: completion.choices[0]?.message.content,
-    }
-    const res = await client.pushMessage({ to: userId, messages: [message] })
-    console.log(res)
+  const feedback = JSON.parse(completion.choices[0]?.message.content ?? "")
+
+  // notionページに書き込む
+  diaryManager.write(
+    diary.id,
+    feedback.title,
+    feedback.feedback,
+    feedback.mental
+  )
+
+  // 指定のuser_idにプッシュ通知を行う
+  const client = new line.messagingApi.MessagingApiClient({
+    channelAccessToken: env.lineChannelAccessToken,
+  })
+  const userId = env.linePushUserId
+  const message = {
+    type: "text",
+    text: completion.choices[0]?.message.content,
   }
+  const res = await client.pushMessage({ to: userId, messages: [message] })
+  console.log(res)
 }
