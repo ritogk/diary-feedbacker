@@ -19,7 +19,7 @@ const getSsmParameter = async (parameterName: string): Promise<string> => {
 export const getEnv = async (): Promise<EnvType> => {
   return {
     notionSecret: process.env.NOTION_SECRET ?? "",
-    notionDiaryDabaseId: process.env.NOTION_DIARY_DATABASE_ID ?? "",
+    notionDiaryDatabaseId: process.env.NOTION_DIARY_DATABASE_ID ?? "",
     lineChannelAccessToken: process.env.LINE_CHANNEL_ACCESS_TOKEN ?? "",
     linePushUserId: await getSsmParameter("/line/user-id"),
     openaiApiKey: process.env.OPENAI_API_KEY ?? "",

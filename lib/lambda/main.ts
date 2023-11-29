@@ -13,7 +13,7 @@ export const handler = async () => {
   })
   // データベースの日付が2023-11/14のものを取得する
   const response = await notion.databases.query({
-    database_id: env.notionDiaryDabaseId,
+    database_id: env.notionDiaryDatabaseId,
     filter: {
       property: "Date",
       date: {
@@ -102,4 +102,3 @@ export const handler = async () => {
     console.log(completion.usage?.total_tokens)
   }
 }
-handler()
