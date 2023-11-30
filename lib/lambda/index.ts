@@ -16,8 +16,9 @@ export const handler = async () => {
   // 今日日付の日記を取得する
   console.log("[st] fetch today diary")
   const today = new Date()
-  const diary = await diaryManager.fetch(today)
-  if (diary.text === "") {
+  await diaryManager.load(today)
+  const diary = diaryManager.getDiary()
+  if (diary === "") {
     console.log("[message] empty diary")
     return
   }
@@ -26,16 +27,19 @@ export const handler = async () => {
   // 日記のフィードバックを受け取る
   console.log("[st] generate feedback")
   const diaryFeedbacker = new DiaryFeedbacker(env.openaiApiKey)
-  const feedback = await diaryFeedbacker.generate(diary.text)
+  const feedback = await diaryFeedbacker.generate(diary)
   console.log("[ed] generate feedback")
 
   // 日記にフィードバックを書き込む
   console.log("[st] write diary")
   diaryManager.write(
-    diary.id,
     feedback.title,
+    feedback.summary,
+    feedback.mental,
     feedback.feedback,
-    feedback.mental
+    feedback.suggestion,
+    feedback.positivity.join(", "),
+    feedback.negativity
   )
   console.log("[ed] write diary")
 

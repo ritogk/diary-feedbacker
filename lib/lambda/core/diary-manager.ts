@@ -4,17 +4,22 @@ import utc from "dayjs/plugin/utc"
 import timezone from "dayjs/plugin/timezone"
 
 export type DiaryManagerType = {
-  fetch(date: Date): Promise<{ id: string; text: string }>
+  getDiary(): string
+  load(date: Date): Promise<void>
   write(
-    id: string,
     title: string,
+    summary: string,
+    mental: number,
     feedback: string,
-    mental: number
+    suggestion: string,
+    positivity: string,
+    negativity: string
   ): Promise<boolean>
 }
 
 export class DiaryManager implements DiaryManagerType {
   private readonly client: Client
+  private page = { id: "", text: "" }
   private readonly dayjs = dayjs
   constructor(secret: string, private readonly diaryDatabaseId: string) {
     this.client = new Client({
@@ -24,7 +29,11 @@ export class DiaryManager implements DiaryManagerType {
     this.dayjs.extend(timezone)
   }
 
-  fetch = async (today: Date): Promise<{ id: string; text: string }> => {
+  getDiary(): string {
+    return this.page.text
+  }
+
+  load = async (today: Date): Promise<void> => {
     const todayFormatted = this.dayjs(today)
       .tz("Asia/Tokyo")
       .format("YYYY-MM-DD")
@@ -56,18 +65,22 @@ export class DiaryManager implements DiaryManagerType {
           diaryBlocks.push(block.paragraph.rich_text[0].plain_text)
         }
       })
+      this.page = { id: pages[0].id, text: diaryBlocks.join("\n") }
     }
-    return { id: pages[0] ? pages[0].id : "", text: diaryBlocks.join("\n") }
+    return
   }
 
   write = async (
-    id: string,
     title: string,
+    summary: string,
+    mental: number,
     feedback: string,
-    mental: number
+    suggestion: string,
+    positivity: string,
+    negativity: string
   ): Promise<boolean> => {
     await this.client.pages.update({
-      page_id: id,
+      page_id: this.page.id,
       properties: {
         title: {
           title: [
@@ -78,6 +91,18 @@ export class DiaryManager implements DiaryManagerType {
             },
           ],
         },
+        Summary: {
+          rich_text: [
+            {
+              text: {
+                content: summary,
+              },
+            },
+          ],
+        },
+        Mental: {
+          number: mental,
+        },
         Feedback: {
           rich_text: [
             {
@@ -87,8 +112,32 @@ export class DiaryManager implements DiaryManagerType {
             },
           ],
         },
-        Mental: {
-          number: mental,
+        Suggestion: {
+          rich_text: [
+            {
+              text: {
+                content: suggestion,
+              },
+            },
+          ],
+        },
+        Positivity: {
+          rich_text: [
+            {
+              text: {
+                content: positivity,
+              },
+            },
+          ],
+        },
+        Negativity: {
+          rich_text: [
+            {
+              text: {
+                content: negativity,
+              },
+            },
+          ],
         },
       },
     })

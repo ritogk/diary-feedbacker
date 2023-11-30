@@ -6,6 +6,7 @@ export type DiaryFeedbackerType = {
 
 export type FeedbackType = {
   title: string
+  summary: string
   feedback: string
   mental: number
   suggestion: string
@@ -41,12 +42,13 @@ export class DiaryFeedbacker implements DiaryFeedbackerType {
     入力と目標をもとに改善提案を150文字以内で@suggestionに埋め込んで下さい。文字列型です。
     入力と目標をもとに良い点を3つあげて@positivity埋め込んで下さい。配列で文字列型です。
     入力と目標をもとに悪い点を1つ@negativityに埋め込んで下さい。文字列型です。
+    入力をもとに本人目線で要約を行い、文字数は元の文章の文字数の半分以下にして@summaryに埋め込んで下さい。文字列型です。
     
     # 目標
     会社で認められるようになる。
     
     # テンプレート
-    {"title":@title, "feedback":@feedback, "mental":@mental, "suggestion":@suggestion, "positivity":@positivity, "negativity":@negativity}
+    {"title":@title, "feedback":@feedback, "mental":@mental, "suggestion":@suggestion, "positivity":@positivity, "negativity":@negativity, "summary":@summary}
         `,
         },
         {
@@ -59,6 +61,7 @@ export class DiaryFeedbacker implements DiaryFeedbackerType {
     // console.log(completion.usage?.total_tokens)
     if (!completion.choices[0]?.message.content) {
       return {
+        summary: "",
         feedback: "",
         title: "",
         mental: 0,
