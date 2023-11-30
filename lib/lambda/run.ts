@@ -1,4 +1,4 @@
-import { handler } from "./handler"
+import { handler } from "."
 
 // ts-nodeから実行するためのファイル
 const run = async () => {

@@ -8,7 +8,7 @@ export class DiaryFeedBuckerStack extends cdk.Stack {
     super(scope, id, props)
 
     const lambdaFunction = new NodejsFunction(this, "sampleFunction", {
-      entry: "lib/lambda/handler.ts",
+      entry: "lib/lambda/index.ts",
       runtime: Runtime.NODEJS_18_X,
       architecture: Architecture.ARM_64,
       handler: "handler",

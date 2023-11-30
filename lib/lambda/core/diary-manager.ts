@@ -4,7 +4,7 @@ import utc from "dayjs/plugin/utc"
 import timezone from "dayjs/plugin/timezone"
 
 export type DiaryManagerType = {
-  read(date: Date): Promise<{ id: string; text: string }>
+  fetch(date: Date): Promise<{ id: string; text: string }>
   write(
     id: string,
     title: string,
@@ -24,10 +24,11 @@ export class DiaryManager implements DiaryManagerType {
     this.dayjs.extend(timezone)
   }
 
-  read = async (today: Date): Promise<{ id: string; text: string }> => {
+  fetch = async (today: Date): Promise<{ id: string; text: string }> => {
     const todayFormatted = this.dayjs(today)
       .tz("Asia/Tokyo")
       .format("YYYY-MM-DD")
+
     const response = await this.client.databases.query({
       database_id: this.diaryDatabaseId,
       filter: {

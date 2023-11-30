@@ -13,23 +13,23 @@ export const handler = async () => {
     env.notionDiaryDatabaseId
   )
 
-  // 今日日付をyyyy-mm-dd形式で取得する
-  console.log("[st] get today diary")
+  // 今日日付の日記を取得する
+  console.log("[st] fetch today diary")
   const today = new Date()
-  const diary = await diaryManager.read(today)
+  const diary = await diaryManager.fetch(today)
   if (diary.text === "") {
-    console.log("no diary")
+    console.log("[message] empty diary")
     return
   }
-  console.log("[ed] get today diary")
+  console.log("[ed] fetch today diary")
 
-  // フィードバックを受け取る
+  // 日記のフィードバックを受け取る
   console.log("[st] generate feedback")
   const diaryFeedbacker = new DiaryFeedbacker(env.openaiApiKey)
   const feedback = await diaryFeedbacker.generate(diary.text)
   console.log("[ed] generate feedback")
 
-  // notionページに書き込む
+  // 日記にフィードバックを書き込む
   console.log("[st] write diary")
   diaryManager.write(
     diary.id,
