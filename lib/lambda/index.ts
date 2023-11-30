@@ -1,6 +1,6 @@
 import { EnvManger } from "./core/env/env-manger"
 import { DiaryManager } from "./core/diary-manager"
-import { DiaryFeedbacker } from "./core/diary-feedbacker"
+import { DiaryFeedbacker } from "./core/diary-feedbacker/diary-feedbacker"
 import { Notification } from "./core/notification/notification"
 import * as MessageGenerater from "./core/notification/message-generater"
 

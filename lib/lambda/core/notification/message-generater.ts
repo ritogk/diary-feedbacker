@@ -1,4 +1,4 @@
-import { FeedbackType } from "@/core/diary-feedbacker"
+import { FeedbackType } from "@/core/diary-feedbacker/prompt"
 export const generate = (feedback: FeedbackType): string => {
   const message = `■タイトル
 ${feedback.title}
