@@ -13,7 +13,7 @@ vim lib/lambda/core/env/local.env
 npx ts-node lib/lambda/run.ts
 ```
 
-## AWSにデプロイ
+## AWSにデプロイして動作する所まで
 ```
 cp cdk.base.env cdk.env
 vim cdk.env
