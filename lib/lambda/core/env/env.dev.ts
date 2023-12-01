@@ -1,8 +1,9 @@
 import { EnvType } from "./env-manger"
 import * as dotenv from "dotenv"
+import * as path from "path"
 
 export const getEnv = async (): Promise<EnvType> => {
-  dotenv.config()
+  dotenv.config({ path: path.join(__dirname, "local.env") })
   return {
     notionSecret: process.env.NOTION_SECRET ?? "",
     notionDiaryDatabaseId: process.env.NOTION_DIARY_DATABASE_ID ?? "",
