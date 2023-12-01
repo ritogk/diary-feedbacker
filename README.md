@@ -1,5 +1,20 @@
-# notion-diary-Insight
-Notionの日記からフィードバックを返してくれるアプリ
+# diary-feedbacker
+臨床心理士のようなAIが日記から様々なフィードバックを送ってくれるアプリ
+
+## 使い方
+1. Notionで日記DBを作る
+ <img src="https://github.com/ritogk/notion-diary-insight/assets/72111956/0b892689-ade3-419b-bbd1-ed54d420fc21" width="50%"/>
+ 
+2. 日記を書く
+<img src="https://github.com/ritogk/notion-diary-insight/assets/72111956/45469219-c0b5-4e99-9c17-628df305372b" width="50%" />
+
+3. apiを実行
+<img src="https://github.com/ritogk/notion-diary-insight/assets/72111956/de4032ce-3b60-475e-97d4-154d1d56baaa" width="50%" />
+
+4. lineにフィードバックが届く
+<img src="https://github.com/ritogk/notion-diary-insight/assets/72111956/12a1b394-540c-46a4-89ef-7d07a6bff5fe" width="50%" />
+
+
 
 ## 設定
 ```
