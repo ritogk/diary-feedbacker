@@ -80,6 +80,11 @@ export class DiaryFeedBuckerStack extends cdk.Stack {
             },
           },
         ],
+        requestTemplates: {
+          "application/json": JSON.stringify({
+            goal: "$input.params('goal')",
+          }),
+        },
         // api-gatewayからlambdaをバックグラウンドで実行する
         requestParameters: {
           "integration.request.header.X-Amz-Invocation-Type": "'Event'",
@@ -98,6 +103,7 @@ export class DiaryFeedBuckerStack extends cdk.Stack {
         // クエリパラメータにapiKeyを必須にする
         requestParameters: {
           "method.request.querystring.apiKey": true,
+          "method.request.querystring.goal": true,
         },
       }
     )

@@ -1,8 +1,8 @@
 import { OpenAI } from "openai"
-import { FeedbackType, prompt } from "./prompt"
+import { FeedbackType, generatePrompt } from "./prompt"
 
 export type DiaryFeedbackerType = {
-  generate(diary: string): Promise<FeedbackType>
+  generate(diary: string, goal: string): Promise<FeedbackType>
 }
 
 export class DiaryFeedbacker implements DiaryFeedbackerType {
@@ -12,7 +12,7 @@ export class DiaryFeedbacker implements DiaryFeedbackerType {
       apiKey: openAIApiKey,
     })
   }
-  generate = async (diary: string): Promise<FeedbackType> => {
+  generate = async (diary: string, goal: string): Promise<FeedbackType> => {
     const completion = await this.openai.chat.completions.create({
       // model: "gpt-3.5-turbo",
       model: "gpt-4",
@@ -20,7 +20,7 @@ export class DiaryFeedbacker implements DiaryFeedbackerType {
       messages: [
         {
           role: "system",
-          content: prompt,
+          content: generatePrompt(goal),
         },
         {
           role: "user",

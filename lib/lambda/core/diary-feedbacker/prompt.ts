@@ -1,4 +1,5 @@
-export const prompt = `
+export const generatePrompt = (goal: string) => {
+  const prompt = `
 あなたはプロの臨床心理士です。
 以下の制約条件と入力された日記をもとに出力してください。
 
@@ -14,11 +15,13 @@ export const prompt = `
 入力をもとに本人目線で要約を行い、文字数は元の文章の文字数の半分以下にして@summaryに埋め込んで下さい。文字列型です。
 
 # 目標
-会社で認められるようになる。
+${goal}
 
 # テンプレート
 {"title":@title, "feedback":@feedback, "mental":@mental, "suggestion":@suggestion, "positivity":@positivity, "negativity":@negativity, "summary":@summary}
 `
+  return prompt
+}
 
 export type FeedbackType = {
   title: string

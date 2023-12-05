@@ -5,6 +5,9 @@ import { Notification } from "./core/notification/notification"
 import * as MessageGenerater from "./core/notification/message-generater"
 
 export const handler = async (event: any) => {
+  // クエリパラメーターから目標を取得
+  const goal = event.goal ?? "感情を安定させる"
+  console.log(`goal: ${goal}`)
   return new Promise(async (resolve, reject) => {
     try {
       const envManager = new EnvManger()
@@ -29,7 +32,7 @@ export const handler = async (event: any) => {
       // 日記のフィードバックを受け取る
       console.log("[st] generate feedback")
       const diaryFeedbacker = new DiaryFeedbacker(env.openaiApiKey)
-      const feedback = await diaryFeedbacker.generate(diary)
+      const feedback = await diaryFeedbacker.generate(diary, goal)
       console.log("[ed] generate feedback")
 
       // 日記にフィードバックを書き込む
