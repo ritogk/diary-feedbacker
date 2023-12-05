@@ -1,7 +1,6 @@
 import { FeedbackType } from "@/core/diary-feedbacker/prompt"
 export const generate = (feedback: FeedbackType): string => {
-  const message = `臨床心理士のラブリーレイナです！
-今日もお疲れ様でした！
+  const message = `今日も1日お疲れ様でした！
 私が感じた事をお伝えしますね。
 
 ■タイトル
